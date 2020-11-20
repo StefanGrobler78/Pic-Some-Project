@@ -34989,6 +34989,8 @@ exports.Context = exports.ContextProvider = undefined;
 
 var _jsx = function () { var REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol.for && Symbol.for("react.element") || 0xeac7; return function createRawReactElement(type, props, key, children) { var defaultProps = type && type.defaultProps; var childrenLength = arguments.length - 3; if (!props && childrenLength !== 0) { props = {}; } if (props && defaultProps) { for (var propName in defaultProps) { if (props[propName] === void 0) { props[propName] = defaultProps[propName]; } } } else if (!props) { props = defaultProps || {}; } if (childrenLength === 1) { props.children = children; } else if (childrenLength > 1) { var childArray = Array(childrenLength); for (var i = 0; i < childrenLength; i++) { childArray[i] = arguments[i + 3]; } props.children = childArray; } return { $$typeof: REACT_ELEMENT_TYPE, type: type, key: key === undefined ? null : '' + key, ref: null, props: props, _owner: null }; }; }();
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _react = __webpack_require__(1);
@@ -35015,9 +35017,23 @@ function ContextProvider(_ref) {
             return setAllPhotos(data);
         });
     }, []);
-    console.log(allPhotos);
+    function toggleFavorite(id) {
+        var updatedArray = allPhotos.map(function (photo) {
+
+            if (photo.id === id) {
+                console.log(id);
+                console.log(!photo.isFavorite);
+                return _extends({}, photo, {
+                    isFavorite: !photo.isFavorite
+                });
+            }
+            return photo;
+        });
+        setAllPhotos(updatedArray);
+    }
+
     return _jsx(Context.Provider, {
-        value: { allPhotos: allPhotos }
+        value: { allPhotos: allPhotos, toggleFavorite: toggleFavorite }
     }, void 0, children);
 }
 
@@ -35037,19 +35053,61 @@ Object.defineProperty(exports, "__esModule", {
 
 var _jsx = function () { var REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol.for && Symbol.for("react.element") || 0xeac7; return function createRawReactElement(type, props, key, children) { var defaultProps = type && type.defaultProps; var childrenLength = arguments.length - 3; if (!props && childrenLength !== 0) { props = {}; } if (props && defaultProps) { for (var propName in defaultProps) { if (props[propName] === void 0) { props[propName] = defaultProps[propName]; } } } else if (!props) { props = defaultProps || {}; } if (childrenLength === 1) { props.children = children; } else if (childrenLength > 1) { var childArray = Array(childrenLength); for (var i = 0; i < childrenLength; i++) { childArray[i] = arguments[i + 3]; } props.children = childArray; } return { $$typeof: REACT_ELEMENT_TYPE, type: type, key: key === undefined ? null : '' + key, ref: null, props: props, _owner: null }; }; }();
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Context = __webpack_require__(42);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _ref2 = _jsx("i", {
+    className: "ri-add-circle-line cart"
+});
 
 function Image(_ref) {
     var className = _ref.className,
         img = _ref.img;
 
+    var _useState = (0, _react.useState)(false),
+        _useState2 = _slicedToArray(_useState, 2),
+        hovered = _useState2[0],
+        setHovered = _useState2[1];
+
+    var _useContext = (0, _react.useContext)(_Context.Context),
+        toggleFavorite = _useContext.toggleFavorite;
+
+    var heartIcon = function heartIcon() {
+        if (img.isFavorite) {
+            return _jsx("i", {
+                onClick: function onClick() {
+                    toggleFavorite(img.id);
+                },
+                className: "ri-heart-fill favorite"
+            });
+        } else if (hovered) {
+            return _jsx("i", {
+                onClick: function onClick() {
+                    toggleFavorite(img.id);
+                },
+                className: "ri-heart-line favorite"
+            });
+        }
+    };
+
+    var cartIcon = hovered && _ref2;
+
     return _jsx("div", {
+        onMouseEnter: function onMouseEnter() {
+            return setHovered(true);
+        },
+        onMouseLeave: function onMouseLeave() {
+            return setHovered(false);
+        },
         className: className + " image-container"
-    }, void 0, _jsx("img", {
+    }, void 0, heartIcon(), cartIcon, _jsx("img", {
         src: img.url,
         className: "image-grid"
     }));

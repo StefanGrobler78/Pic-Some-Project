@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react"
 
 const Context = React.createContext()
 
+
 function ContextProvider({children}) {
     const [allPhotos, setAllPhotos] = useState([])
 
@@ -11,9 +12,24 @@ function ContextProvider({children}) {
             .then(response => response.json())
             .then(data => setAllPhotos(data))
     },[])
-    console.log(allPhotos);
+    function toggleFavorite(id){
+        const updatedArray = allPhotos.map(photo => {
+          
+            if(photo.id === id){
+                console.log(id)
+                console.log(!photo.isFavorite) 
+                return {
+                    ...photo,
+                    isFavorite: !photo.isFavorite
+                }  
+            }
+            return photo
+        })
+        setAllPhotos(updatedArray)
+    }
+    
     return (
-        <Context.Provider value={{allPhotos: allPhotos}}>
+        <Context.Provider value={{allPhotos: allPhotos, toggleFavorite: toggleFavorite}}>
             
             {children}
         </Context.Provider>
